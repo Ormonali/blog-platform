@@ -1,2 +1,5 @@
 node_modules
 .env
+# Fichiers spécifiques au backend
+backend/node_modules
+backend/.env
