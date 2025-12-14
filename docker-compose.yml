@@ -4,6 +4,9 @@ services:
     ports: ["3000:3000"]
     environment:
       - API_URL=http://localhost:8080
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on: [backend]
 
   backend:
@@ -12,6 +15,11 @@ services:
     environment:
       - DATABASE_URL=postgres://app:app@database:5432/appdb
       - KAFKA_BROKER=kafka:9092
+      - KAFKA_TOPIC=posts.created
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on: [database, kafka]
 
   database:
