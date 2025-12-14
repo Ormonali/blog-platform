@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors"; 
 import { kafkaProducer, initKafka } from "./kafka.js";
 import postRoutes from "./postRoutes.js"; // Import API routes
+import { connectPg } from "./db.js";
 
 dotenv.config();
 const app = express();
