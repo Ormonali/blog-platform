@@ -34,3 +34,18 @@ export async function createPost({ title, body }) {
   );
   return result.rows[0];
 }
+
+// delete post by id
+export async function deletePost(id) {
+  const result = await pool.query ("DELETE FROM posts WHERE id = $1 RETURNING *", [id])
+  return result.rows[0];
+}
+
+// Update a post by ID
+export async function updatePost(id, { title, body }) {
+  const result = await pool.query(
+    "UPDATE posts SET title = $1, body = $2 WHERE id = $3 RETURNING *",
+    [title, body, id]
+  );
+  return result.rows[0];
+}

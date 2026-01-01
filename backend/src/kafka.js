@@ -31,3 +31,17 @@ export async function sendPostCreatedEvent(post) {
   });
   log.info({ post_id: post.id }, `Event sent to Kafka on topic: ${KAFKA_TOPIC}`);
 }
+
+  //to notice data has been updated or deleted 
+export async function sendPostEvent(type, post) {
+  await kafkaProducer.send({
+    topic: KAFKA_TOPIC,
+    messages: [
+      {
+        // Nous envoyons maintenant le type (post.created, post.updated, post.deleted)
+        value: JSON.stringify({ type, payload: post }),
+      },
+    ],
+  });
+  log.info({ post_id: post.id, type }, `Event sent to Kafka`);
+}
