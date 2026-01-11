@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function PostForm({ onCreate }) {
+export default function PostForm({ initialPost = null, onSubmit, onCancel, submitLabel = "Save" }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+
+  useEffect(() => {
+    if (initialPost) {
+      setTitle(initialPost.title || "");
+      setBody(initialPost.body || "");
+    } else {
+      setTitle("");
+      setBody("");
+    }
+  }, [initialPost]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -10,9 +20,14 @@ export default function PostForm({ onCreate }) {
       alert("Title and body are required");
       return;
     }
-    await onCreate({ title: title.trim(), body: body.trim() });
-    setTitle("");
-    setBody("");
+    if (onSubmit) {
+      await onSubmit({ title: title.trim(), body: body.trim() });
+    }
+    // Clear only when creating new post (no initialPost)
+    if (!initialPost) {
+      setTitle("");
+      setBody("");
+    }
   }
 
   return (
@@ -26,7 +41,7 @@ export default function PostForm({ onCreate }) {
         backgroundColor: "#fff",
       }}
     >
-      <h2>Create New Post</h2>
+      <h2>{initialPost ? "Edit Post" : "Create New Post"}</h2>
       <div style={{ marginBottom: "12px" }}>
         <label htmlFor="title" style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}>
           Title
@@ -68,20 +83,39 @@ export default function PostForm({ onCreate }) {
           required
         />
       </div>
-      <button
-        type="submit"
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "16px",
-        }}
-      >
-        Add Post
-      </button>
+      <div style={{ display: "flex", gap: "8px" }}>
+        <button
+          type="submit"
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+        >
+          {submitLabel}
+        </button>
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

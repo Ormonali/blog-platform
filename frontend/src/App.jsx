@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { api } from "./api";
+import { getPosts, createPost, updatePost, deletePost } from "./api";
 import PostForm from "./components/PostForm";
 import PostsList from "./components/PostsList";
 
@@ -10,7 +10,7 @@ export default function App() {
   async function fetchPosts() {
     setLoading(true);
     try {
-      const res = await api.get("/posts");
+      const res = await getPosts();
       setPosts(res.data);
     } catch (err) {
       console.error(err);
@@ -20,8 +20,30 @@ export default function App() {
   }
 
   async function handleCreate(post) {
-    await api.post("/posts", post);
-    fetchPosts();
+    try {
+      await createPost(post);
+      fetchPosts();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleUpdate(id, post) {
+    try {
+      await updatePost(id, post);
+      fetchPosts();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await deletePost(id);
+      fetchPosts();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   useEffect(() => {
@@ -40,9 +62,9 @@ export default function App() {
       }}
     >
       <h1 style={{ textAlign: "center", color: "#333", marginBottom: "20px" }}>📝 Blog Posts</h1>
-      <PostForm onCreate={handleCreate} />
+      <PostForm onSubmit={handleCreate} submitLabel="Add Post" />
       <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #ddd" }} />
-      <PostsList posts={posts} loading={loading} />
+      <PostsList posts={posts} loading={loading} onUpdate={handleUpdate} onDelete={handleDelete} />
     </div>
   );
 }
